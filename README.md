@@ -197,6 +197,11 @@ RUST_LOG=debug ./corplink-rs config.json
   // - full:  use full-tunnel routes from server
   //          often combined with "auto_setup_routes": false in container/gateway setups
   "route_mode": "split",
+  // optional strict CIDR whitelist. each entry is intersected with the routes
+  // returned by the server, so it can only narrow the VPN routes. an empty list
+  // allows no routes; missing/null preserves the server routes. when both lists
+  // are set, vpn_disallowed_routes is subtracted after this whitelist.
+  "vpn_allowed_routes": ["192.168.2.0/24"],
   // optional: list of CIDRs to carve out of AllowedIPs (and system routes).
   // applied as CIDR subtraction: each entry is subtracted from every route
   // returned by the server, so listing a smaller range like "10.68.0.0/16"
