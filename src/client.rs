@@ -952,33 +952,28 @@ impl Client {
             }
         };
 
-        // Carve user-specified CIDRs out of allowed_ips. This removes any IPs in
-        // vpn_disallowed_routes from the VPN's AllowedIPs (and the system routes
-        // derived from them), which is the standard way to avoid routing loops in
-        // full-tunnel mode — e.g. listing the local LAN or a CIDR covering the
-        // VPN peer endpoint so their packets don't get captured by the tunnel.
-        //
-        // Semantics: CIDR subtraction. An entry like "10.68.0.0/16" carves that
-        // whole range out of each allowed_ip, even when allowed_ip is a larger
-        // supernet such as "0.0.0.0/0" — which expands to a minimal set of
-        // smaller CIDRs covering "allowed minus disallowed".
-        if let Some(disallowed) = self.conf.vpn_disallowed_routes.as_ref() {
-            if !disallowed.is_empty() {
-                let before = allowed_ips.len();
-                for d in disallowed {
-                    let mut carved = Vec::with_capacity(allowed_ips.len());
-                    for a in &allowed_ips {
-                        carved.extend(crate::utils::subtract_cidr_from_cidr(a, d));
-                    }
-                    allowed_ips = carved;
+        // Restrict server routes to the optional whitelist, then carve out the
+        // optional denylist. A configured empty whitelist intentionally yields
+        // no AllowedIPs/routes; invalid whitelist entries fail closed.
+        if let Some(allowed) = self.conf.vpn_allowed_routes.as_deref() {
+            for route in allowed {
+                if !crate::utils::is_valid_cidr(route) {
+                    log::warn!("ignoring invalid vpn_allowed_routes CIDR: {:?}", route);
                 }
-                log::info!(
-                    "vpn_disallowed_routes applied: {} -> {} entries (carved: {:?})",
-                    before,
-                    allowed_ips.len(),
-                    disallowed
-                );
             }
+        }
+        let before = allowed_ips.len();
+        allowed_ips = crate::utils::apply_route_filters(
+            &allowed_ips,
+            self.conf.vpn_allowed_routes.as_deref(),
+            self.conf.vpn_disallowed_routes.as_deref(),
+        );
+        if self.conf.vpn_allowed_routes.is_some() || self.conf.vpn_disallowed_routes.is_some() {
+            log::info!(
+                "VPN route filters applied: {} -> {} entries",
+                before,
+                allowed_ips.len()
+            );
         }
 
         // Auto-carve the VPN peer endpoint IP out of allowed_ips. In full-tunnel mode

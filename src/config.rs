@@ -73,6 +73,9 @@ pub struct Config {
     pub auto_setup_routes: Option<bool>,
     /// "split" (default) or "full". Selects which route list from the server to apply.
     pub route_mode: Option<RouteMode>,
+    /// Optional CIDR whitelist intersected with server routes.
+    /// Missing/null preserves server routes; an empty list allows no routes.
+    pub vpn_allowed_routes: Option<Vec<String>>,
     /// Optional list of CIDR routes to exclude from AllowedIPs / system routes.
     /// Useful in full mode to punch holes for local LAN or the VPN peer IP itself,
     /// avoiding routing loops (e.g. 192.168.1.0/24, 10.0.0.5/32).
@@ -101,7 +104,7 @@ impl fmt::Display for Config {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match serde_json::to_string_pretty(self) {
             Ok(s) => write!(f, "{}", s),
-            Err(e) => write!(f, "<invalid config: {e}>")
+            Err(e) => write!(f, "<invalid config: {e}>"),
         }
     }
 }
