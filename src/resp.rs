@@ -33,6 +33,7 @@ pub struct RespLoginMethod {
 pub struct RespTpsLoginMethod {
     pub alias: String,
     pub login_url: String,
+    #[serde(default)]
     pub token: String,
 }
 

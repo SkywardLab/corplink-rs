@@ -6,7 +6,7 @@
 
 ## ArchLinux
 
-下载 [release](https://github.com/PinkD/corplink-rs/releases) 中的安装包，并安装
+下载 [release](https://github.com/SkywardLab/corplink-rs/releases) 中的安装包，并安装
 
 ```bash
 pacman -U corplink-rs-4.1-1-x86_64.pkg.tar.zst
@@ -19,7 +19,7 @@ pacman -U corplink-rs-4.1-1-x86_64.pkg.tar.zst
 ### linux/macos
 
 ```bash
-git clone https://github.com/PinkD/corplink-rs --depth 1
+git clone https://github.com/SkywardLab/corplink-rs --depth 1
 cd corplink-rs
 # build libwg
 cd libwg
@@ -77,7 +77,7 @@ systemctl start corplink-rs@test.service
 
 ### 快速开始（推荐使用预编译版本）
 
-1. 从 [Releases](https://github.com/PinkD/corplink-rs/releases) 下载 `corplink-rs-*-windows.zip`
+1. 从 [Releases](https://github.com/SkywardLab/corplink-rs/releases) 下载 `corplink-rs-*-windows.zip`
 2. 解压到任意目录
 3. 运行 `setup.ps1` 自动获取 `wintun.dll`：
 

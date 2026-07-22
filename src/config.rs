@@ -8,7 +8,7 @@ use crate::state::State;
 use crate::utils;
 
 const DEFAULT_DEVICE_NAME: &str = "DollarOS";
-const DEFAULT_INTERFACE_NAME: &str = "corplink";
+const DEFAULT_INTERFACE_NAME: &str = "utun";
 
 pub const PLATFORM_LDAP: &str = "ldap";
 pub const PLATFORM_CORPLINK: &str = "feilian";
